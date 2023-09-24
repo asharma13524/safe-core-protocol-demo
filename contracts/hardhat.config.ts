@@ -20,7 +20,7 @@ const argv : any = yargs
     .help(false)
     .version(false).argv;
 
-const { NODE_URL, MNEMONIC, INFURA_KEY, ETHERSCAN_API_KEY} = process.env;
+const { NODE_URL, MNEMONIC, INFURA_KEY, ETHERSCAN_API_KEY, PRIVATE_KEY} = process.env;
 
 import "./src/tasks/test_registry"
 
@@ -47,52 +47,59 @@ if (["goerli", "mumbai"].includes(argv.network) && INFURA_KEY === undefined) {
 
 const sharedNetworkConfig: HttpNetworkUserConfig = {};
 
-sharedNetworkConfig.accounts = {
-  mnemonic: MNEMONIC || ""
-}
+// sharedNetworkConfig.accounts = MNEMONIC
+//   ? {
+//         mnemonic: MNEMONIC,
+//     }
+//   : {
+//         privateKeys: [PRIVATE_KEY],
+// };
+
+
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.18",
-  gasReporter: {
-    enabled: (process.env.REPORT_GAS) ? true : false
-  },
-  paths: {
-    artifacts: "build/artifacts",
-    cache: "build/cache",
-    deploy: "src/deploy",
-    sources: "contracts",
-  },
-  networks: {
-    hardhat: {
-      allowUnlimitedContractSize: true,
-      blockGasLimit: 100000000,
-      gas: 100000000,
+    solidity: "0.8.18",
+    gasReporter: {
+        enabled: process.env.REPORT_GAS ? true : false,
     },
-    goerli: {
-      ...sharedNetworkConfig,
-      url: `https://goerli.infura.io/v3/${INFURA_KEY}`,
+    paths: {
+        artifacts: "build/artifacts",
+        cache: "build/cache",
+        deploy: "src/deploy",
+        sources: "contracts",
     },
-    mumbai: {
-      ...sharedNetworkConfig,
-      url: `https://polygon-mumbai.infura.io/v3/${INFURA_KEY}`,
+    networks: {
+        hardhat: {
+            allowUnlimitedContractSize: true,
+            blockGasLimit: 100000000,
+            gas: 100000000,
+        },
+        fork: {
+            ...sharedNetworkConfig,
+            url: `http://127.0.0.1:8545/`,
+            accounts: [PRIVATE_KEY],
+        },
+        mumbai: {
+            ...sharedNetworkConfig,
+            url: `https://polygon-mumbai.infura.io/v3/${INFURA_KEY}`,
+        },
+        gnosis: {
+            ...sharedNetworkConfig,
+            url: "https://rpc.gnosischain.com",
+        },
     },
-    gnosis: {
-      ...sharedNetworkConfig,
-      url: "https://rpc.gnosischain.com",
-    }
-  },
-  deterministicDeployment,
-  etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0
+    deterministicDeployment,
+    etherscan: {
+        apiKey: ETHERSCAN_API_KEY,
     },
-    recoverer: {
-      default: 1
-    }
-  }
+    namedAccounts: {
+        deployer: {
+            default: 0,
+        },
+        recoverer: {
+            default: 1,
+        },
+    },
 };
 
 if (NODE_URL) {

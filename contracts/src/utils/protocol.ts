@@ -20,8 +20,9 @@ export const getProtocolManagerAddress = async(hre: HardhatRuntimeEnvironment): 
     const chainId = await hre.getChainId()
 
     // For the tests we deploy a mock for the manager
+    // todo: change chain id for testnet
     if (chainId === "31337") return deployMock(hre, "ManagerMock")
-    
+
     if (!(chainId in protocolDeployments)) throw Error("Unsupported Chain")
     const manager = (protocolDeployments as any)[chainId][0].contracts.SafeProtocolManager.address
     if (typeof manager !== "string") throw Error("Unexpected Manager")
@@ -29,14 +30,14 @@ export const getProtocolManagerAddress = async(hre: HardhatRuntimeEnvironment): 
 }
 
 export const getProtocolRegistryAddress = async(hre: HardhatRuntimeEnvironment): Promise<string> => {
-    const chainId = await hre.getChainId()
-
+    const chainId = await hre.getChainId();
     // For the tests we deploy a mock for the registry
-    if (chainId === "31337") return deployMock(hre, "RegistryMock")
-    
-    if (!(chainId in protocolDeployments)) throw Error("Unsupported Chain")
+    // todo: change chain id for testnet
+    if (chainId === "31337") return deployMock(hre, "RegistryMock");
+
+    if (!(chainId in protocolDeployments)) throw Error("Unsupported Chain");
     // We use the unrestricted registry for the demo
-    const registry = (protocolDeployments as any)[chainId][0].contracts.TestSafeProtocolRegistryUnrestricted.address
-    if (typeof registry !== "string") throw Error("Unexpected Registry")
-    return registry
+    const registry = (protocolDeployments as any)[chainId][0].contracts.TestSafeProtocolRegistryUnrestricted.address;
+    if (typeof registry !== "string") throw Error("Unexpected Registry");
+    return registry;
 }

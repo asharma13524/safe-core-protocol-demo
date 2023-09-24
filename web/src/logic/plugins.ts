@@ -53,7 +53,7 @@ const buildEnablePlugin = async(plugin: string, requiresRootAccess: boolean): Pr
         value: "0",
         data: (await manager.enablePlugin.populateTransaction(plugin, requiresRootAccess)).data
     }
-} 
+}
 
 export const enablePlugin = async(plugin: string, requiresRootAccess: boolean) => {
     if (!await isConnectedToSafe()) throw Error("Not connected to a Safe")
@@ -78,7 +78,7 @@ const buildDisablePlugin = async(pointer: string, plugin: string): Promise<BaseT
         value: "0",
         data: (await manager.disablePlugin.populateTransaction(pointer, plugin)).data
     }
-} 
+}
 
 export const disablePlugin = async(plugin: string) => {
     if (!await isConnectedToSafe()) throw Error("Not connected to a Safe")

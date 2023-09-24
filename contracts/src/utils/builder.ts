@@ -26,3 +26,21 @@ export const buildRootTx = (address: AddressLike, value: bigint, data: string, n
         metadataHash: metadataHash,
     };
 };
+
+export const buildTransferDAITx = (recipient: AddressLike, amount: bigint, nonce: bigint, metadataHash: Uint8Array | string, data: string): SafeTransaction => {
+    // DAI's transfer function signature: transfer(address,uint256)
+    // const transferFunctionSig = "0xa9059cbb";
+    // const data = transferFunctionSig + recipient.slice(2).padStart(64, '0') + amount.toString(16).padStart(64, '0'); // encode the recipient address and amount into the data
+    return {
+        actions: [
+            {
+                to: recipient,
+                value: amount,
+                data: data,
+            },
+        ],
+        nonce: nonce,
+        metadataHash: metadataHash,
+    };
+};
+
